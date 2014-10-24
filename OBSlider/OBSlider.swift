@@ -9,11 +9,25 @@
 import Foundation
 import UIKit
 
+/** Protocol to listen for slider changes. */
+@objc
+protocol OBSliderDelegate: NSObjectProtocol {
+	
+	optional func sliderDidBeginScrubbing(slider: OBSlider)
+	
+	optional func sliderDidEndScrubbing(slider: OBSlider)
+	
+	optional func slider(slider: OBSlider, didChangeScrubbingSpeed speed: Float)
+	
+}
+
 class OBSlider: UISlider {
 	
 	var scrubbingSpeed: Float = 1.0
 	var scrubbingSpeeds: Array<Float> = [1.0, 0.5, 0.25, 0.1]
 	var scrubbingSpeedChangePositions: Array<Float> = [0.0, 50.0, 100.0, 150.0]
+	
+	var delegate: OBSliderDelegate!
 	
 	private var realPositionValue: Float = 0.0
 	private var beganTrackingLocation = CGPointZero
@@ -55,6 +69,9 @@ class OBSlider: UISlider {
 			let thumbRect = thumbRectForBounds(bounds, trackRect: trackRectForBounds(bounds), value: value)
 			beganTrackingLocation = CGPointMake(thumbRect.origin.x + thumbRect.size.width / 2.0, thumbRect.origin.y + thumbRect.size.height / 2.0)
 			realPositionValue = value
+			
+			delegate?.sliderDidBeginScrubbing?(self)
+			delegate?.slider?(self, didChangeScrubbingSpeed: scrubbingSpeed)
 		}
 		return beginTracking
 	}
@@ -71,7 +88,12 @@ class OBSlider: UISlider {
 			if scrubbingSpeedChangePosIndex == NSNotFound {
 				scrubbingSpeedChangePosIndex = scrubbingSpeeds.count
 			}
-			scrubbingSpeed = scrubbingSpeeds[scrubbingSpeedChangePosIndex - 1]
+			
+			let newScrubbingSpeed = scrubbingSpeeds[scrubbingSpeedChangePosIndex - 1]
+			if (newScrubbingSpeed != scrubbingSpeed) {
+				delegate?.slider?(self, didChangeScrubbingSpeed: newScrubbingSpeed)
+			}
+			scrubbingSpeed = newScrubbingSpeed
 			
 			let trackRect = trackRectForBounds(bounds)
 			realPositionValue = realPositionValue + Float(maximumValue - minimumValue) * Float(trackingOffset / trackRect.size.width)
@@ -96,6 +118,7 @@ class OBSlider: UISlider {
 		if tracking {
 			scrubbingSpeed = scrubbingSpeeds[0]
 			sendActionsForControlEvents(.ValueChanged)
+			delegate?.sliderDidEndScrubbing?(self)
 		}
 	}
 	
