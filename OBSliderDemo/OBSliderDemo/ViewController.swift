@@ -16,19 +16,19 @@ class ViewController: UIViewController {
 	
 	var titleLabel: UILabel {
 		var titleLabel = UILabel(frame: CGRectZero)
-		titleLabel.backgroundColor = UIColor.clearColor()
-		titleLabel.font = UIFont.boldSystemFontOfSize(17.0)
+		titleLabel.backgroundColor = .clearColor()
+		titleLabel.font = .boldSystemFontOfSize(17.0)
 		titleLabel.textAlignment = .Left
-		titleLabel.textColor = UIColor.blackColor()
+		titleLabel.textColor = .blackColor()
 		return titleLabel
 	}
 	
 	var detailLabel: UILabel {
 		var detailLabel = UILabel(frame: CGRectZero)
-		detailLabel.backgroundColor = UIColor.clearColor()
-		detailLabel.font = UIFont.systemFontOfSize(17.0)
+		detailLabel.backgroundColor = .clearColor()
+		detailLabel.font = .systemFontOfSize(17.0)
 		detailLabel.textAlignment = .Center
-		detailLabel.textColor = UIColor.blackColor()
+		detailLabel.textColor = .blackColor()
 		return detailLabel
 	}
 	
