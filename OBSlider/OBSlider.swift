@@ -27,7 +27,7 @@ class OBSlider: UISlider {
 	var scrubbingSpeeds: Array<Float> = [1.0, 0.5, 0.25, 0.1]
 	var scrubbingSpeedChangePositions: Array<Float> = [0.0, 50.0, 100.0, 150.0]
 	
-	var delegate: OBSliderDelegate!
+	weak var delegate: OBSliderDelegate!
 	
 	private var realPositionValue: Float = 0.0
 	private var beganTrackingLocation = CGPointZero
