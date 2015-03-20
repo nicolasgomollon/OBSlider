@@ -11,7 +11,7 @@ import UIKit
 
 /** Protocol to listen for slider changes. */
 @objc
-protocol OBSliderDelegate: NSObjectProtocol {
+public protocol OBSliderDelegate: NSObjectProtocol {
 	
 	optional func sliderDidBeginScrubbing(slider: OBSlider)
 	
@@ -21,26 +21,26 @@ protocol OBSliderDelegate: NSObjectProtocol {
 	
 }
 
-class OBSlider: UISlider {
+public class OBSlider: UISlider {
 	
-	var scrubbingSpeed: Float = 1.0
-	var scrubbingSpeeds: Array<Float> = [1.0, 0.5, 0.25, 0.1]
-	var scrubbingSpeedChangePositions: Array<Float> = [0.0, 50.0, 100.0, 150.0]
+	public var scrubbingSpeed: Float = 1.0
+	public var scrubbingSpeeds: Array<Float> = [1.0, 0.5, 0.25, 0.1]
+	public var scrubbingSpeedChangePositions: Array<Float> = [0.0, 50.0, 100.0, 150.0]
 	
-	weak var delegate: OBSliderDelegate!
+	public weak var delegate: OBSliderDelegate!
 	
 	private var realPositionValue: Float = 0.0
 	private var beganTrackingLocation = CGPointZero
 	
-	convenience override init() {
+	public convenience override init() {
 		self.init(frame: CGRectZero)
 	}
 	
-	override init(frame: CGRect) {
+	public override init(frame: CGRect) {
 		super.init(frame: frame)
 	}
 	
-	required init(coder aDecoder: NSCoder) {
+	public required init(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		if aDecoder.containsValueForKey("scrubbingSpeeds") {
 			scrubbingSpeeds = aDecoder.decodeObjectForKey("scrubbingSpeeds") as Array<Float>
@@ -53,13 +53,13 @@ class OBSlider: UISlider {
 		}
 	}
 	
-	override func encodeWithCoder(aCoder: NSCoder) {
+	public override func encodeWithCoder(aCoder: NSCoder) {
 		super.encodeWithCoder(aCoder)
 		aCoder.encodeObject(scrubbingSpeeds, forKey: "scrubbingSpeeds")
 		aCoder.encodeObject(scrubbingSpeedChangePositions, forKey: "scrubbingSpeedChangePositions")
 	}
 	
-	override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
+	public override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
 		let beginTracking = super.beginTrackingWithTouch(touch, withEvent: event)
 		if beginTracking {
 			// Set the beginning tracking location to the center of the current
@@ -76,7 +76,7 @@ class OBSlider: UISlider {
 		return beginTracking
 	}
 	
-	override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
+	public override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
 		if tracking {
 			let previousLocation = touch.previousLocationInView(self)
 			let currentLocation = touch.locationInView(self)
@@ -114,7 +114,7 @@ class OBSlider: UISlider {
 		return tracking
 	}
 	
-	override func endTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) {
+	public override func endTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) {
 		if tracking {
 			scrubbingSpeed = scrubbingSpeeds[0]
 			sendActionsForControlEvents(.ValueChanged)
@@ -122,7 +122,7 @@ class OBSlider: UISlider {
 		}
 	}
 	
-	func indexOfLower(scrubbingSpeed scrubbingSpeedPositions: Array<Float>, forOffset verticalOffset: Float) -> Int {
+	private func indexOfLower(scrubbingSpeed scrubbingSpeedPositions: Array<Float>, forOffset verticalOffset: Float) -> Int {
 		for (i, scrubbingSpeedOffset) in enumerate(scrubbingSpeedPositions) {
 			if verticalOffset < scrubbingSpeedOffset {
 				return i
