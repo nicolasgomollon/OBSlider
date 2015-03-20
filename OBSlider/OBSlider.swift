@@ -43,10 +43,10 @@ class OBSlider: UISlider {
 	required init(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		if aDecoder.containsValueForKey("scrubbingSpeeds") {
-			scrubbingSpeeds = aDecoder.decodeObjectForKey("scrubbingSpeeds") as! Array<Float>
+			scrubbingSpeeds = aDecoder.decodeObjectForKey("scrubbingSpeeds") as Array<Float>
 		}
 		if aDecoder.containsValueForKey("scrubbingSpeedChangePositions") {
-			scrubbingSpeedChangePositions = aDecoder.decodeObjectForKey("scrubbingSpeedChangePositions") as! Array<Float>
+			scrubbingSpeedChangePositions = aDecoder.decodeObjectForKey("scrubbingSpeedChangePositions") as Array<Float>
 		}
 		if scrubbingSpeeds.count > 0 {
 			scrubbingSpeed = scrubbingSpeeds[0]
