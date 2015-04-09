@@ -32,7 +32,7 @@ class ViewController: UIViewController {
 		return detailLabel
 	}
 	
-	convenience override init() {
+	convenience init() {
 		self.init(nibName: nil, bundle: nil)
 	}
 	

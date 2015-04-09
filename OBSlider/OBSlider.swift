@@ -32,7 +32,7 @@ public class OBSlider: UISlider {
 	private var realPositionValue: Float = 0.0
 	private var beganTrackingLocation = CGPointZero
 	
-	public convenience override init() {
+	public convenience init() {
 		self.init(frame: CGRectZero)
 	}
 	
@@ -43,10 +43,10 @@ public class OBSlider: UISlider {
 	public required init(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		if aDecoder.containsValueForKey("scrubbingSpeeds") {
-			scrubbingSpeeds = aDecoder.decodeObjectForKey("scrubbingSpeeds") as Array<Float>
+			scrubbingSpeeds = aDecoder.decodeObjectForKey("scrubbingSpeeds") as! Array<Float>
 		}
 		if aDecoder.containsValueForKey("scrubbingSpeedChangePositions") {
-			scrubbingSpeedChangePositions = aDecoder.decodeObjectForKey("scrubbingSpeedChangePositions") as Array<Float>
+			scrubbingSpeedChangePositions = aDecoder.decodeObjectForKey("scrubbingSpeedChangePositions") as! Array<Float>
 		}
 		if scrubbingSpeeds.count > 0 {
 			scrubbingSpeed = scrubbingSpeeds[0]
