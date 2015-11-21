@@ -40,7 +40,7 @@ public class OBSlider: UISlider {
 		super.init(frame: frame)
 	}
 	
-	public required init(coder aDecoder: NSCoder) {
+	public required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		if aDecoder.containsValueForKey("scrubbingSpeeds") {
 			scrubbingSpeeds = aDecoder.decodeObjectForKey("scrubbingSpeeds") as! Array<Float>
@@ -59,7 +59,7 @@ public class OBSlider: UISlider {
 		aCoder.encodeObject(scrubbingSpeedChangePositions, forKey: "scrubbingSpeedChangePositions")
 	}
 	
-	public override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
+	public override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
 		let beginTracking = super.beginTrackingWithTouch(touch, withEvent: event)
 		if beginTracking {
 			// Set the beginning tracking location to the center of the current
@@ -76,7 +76,7 @@ public class OBSlider: UISlider {
 		return beginTracking
 	}
 	
-	public override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
+	public override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
 		if tracking {
 			let previousLocation = touch.previousLocationInView(self)
 			let currentLocation = touch.locationInView(self)
@@ -114,7 +114,7 @@ public class OBSlider: UISlider {
 		return tracking
 	}
 	
-	public override func endTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) {
+	public override func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?) {
 		if tracking {
 			scrubbingSpeed = scrubbingSpeeds[0]
 			sendActionsForControlEvents(.ValueChanged)
@@ -123,7 +123,7 @@ public class OBSlider: UISlider {
 	}
 	
 	private func indexOfLower(scrubbingSpeed scrubbingSpeedPositions: Array<Float>, forOffset verticalOffset: Float) -> Int {
-		for (i, scrubbingSpeedOffset) in enumerate(scrubbingSpeedPositions) {
+		for (i, scrubbingSpeedOffset) in scrubbingSpeedPositions.enumerate() {
 			if verticalOffset < scrubbingSpeedOffset {
 				return i
 			}

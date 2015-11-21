@@ -15,7 +15,7 @@ class ViewController: UIViewController {
 	var scrubbingSpeedLabel: UILabel!
 	
 	var titleLabel: UILabel {
-		var titleLabel = UILabel(frame: CGRectZero)
+		let titleLabel = UILabel(frame: CGRectZero)
 		titleLabel.backgroundColor = .clearColor()
 		titleLabel.font = .boldSystemFontOfSize(17.0)
 		titleLabel.textAlignment = .Left
@@ -24,7 +24,7 @@ class ViewController: UIViewController {
 	}
 	
 	var detailLabel: UILabel {
-		var detailLabel = UILabel(frame: CGRectZero)
+		let detailLabel = UILabel(frame: CGRectZero)
 		detailLabel.backgroundColor = .clearColor()
 		detailLabel.font = .systemFontOfSize(17.0)
 		detailLabel.textAlignment = .Center
@@ -41,7 +41,7 @@ class ViewController: UIViewController {
 		initialize()
 	}
 	
-	required init(coder aDecoder: NSCoder) {
+	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		initialize()
 	}
@@ -49,12 +49,12 @@ class ViewController: UIViewController {
 	private func initialize() {
 		let paddedWidth = UIScreen.mainScreen().bounds.size.width - (20.0 * 2.0)
 		
-		var titleLabelOB = titleLabel
+		let titleLabelOB = titleLabel
 		titleLabelOB.frame = CGRectMake(20.0, 109.0, paddedWidth, 21.0)
 		titleLabelOB.text = "OBSlider"
 		view.addSubview(titleLabelOB)
 		
-		var titleLabelUI = titleLabel
+		let titleLabelUI = titleLabel
 		titleLabelUI.frame = CGRectMake(20.0, 190.0, paddedWidth, 21.0)
 		titleLabelUI.text = "UISlider"
 		view.addSubview(titleLabelUI)
@@ -72,7 +72,7 @@ class ViewController: UIViewController {
 		slider.value = 500.0
 		view.addSubview(slider)
 		
-		var standardSlider = UISlider(frame: CGRectMake(18.0, 219.0, UIScreen.mainScreen().bounds.size.width - (18.0 * 2.0), 31.0))
+		let standardSlider = UISlider(frame: CGRectMake(18.0, 219.0, UIScreen.mainScreen().bounds.size.width - (18.0 * 2.0), 31.0))
 		standardSlider.maximumValue = 1000.0
 		standardSlider.value = 500.0
 		view.addSubview(standardSlider)
@@ -94,7 +94,7 @@ class ViewController: UIViewController {
 	}
 	
 	func updateUI() {
-		var percentFormatter = NSNumberFormatter()
+		let percentFormatter = NSNumberFormatter()
 		percentFormatter.numberStyle = .PercentStyle
 		
 		sliderValueLabel.text = String(format: "Value: %.0f", slider.value)
