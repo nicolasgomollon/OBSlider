@@ -10,25 +10,25 @@ import UIKit
 
 class ViewController: UIViewController {
 	
-	var slider = OBSlider(frame: CGRectMake(18.0, 138.0, UIScreen.mainScreen().bounds.size.width - (18.0 * 2.0), 31.0))
+	var slider = OBSlider(frame: CGRect(x: 18.0, y: 138.0, width: UIScreen.main.bounds.size.width - (18.0 * 2.0), height: 31.0))
 	var sliderValueLabel: UILabel!
 	var scrubbingSpeedLabel: UILabel!
 	
 	var titleLabel: UILabel {
-		let titleLabel = UILabel(frame: CGRectZero)
-		titleLabel.backgroundColor = .clearColor()
-		titleLabel.font = .boldSystemFontOfSize(17.0)
-		titleLabel.textAlignment = .Left
-		titleLabel.textColor = .blackColor()
+		let titleLabel = UILabel(frame: CGRect.zero)
+		titleLabel.backgroundColor = .clear
+		titleLabel.font = .boldSystemFont(ofSize: 17.0)
+		titleLabel.textAlignment = .left
+		titleLabel.textColor = .black
 		return titleLabel
 	}
 	
 	var detailLabel: UILabel {
-		let detailLabel = UILabel(frame: CGRectZero)
-		detailLabel.backgroundColor = .clearColor()
-		detailLabel.font = .systemFontOfSize(17.0)
-		detailLabel.textAlignment = .Center
-		detailLabel.textColor = .blackColor()
+		let detailLabel = UILabel(frame: CGRect.zero)
+		detailLabel.backgroundColor = .clear
+		detailLabel.font = .systemFont(ofSize: 17.0)
+		detailLabel.textAlignment = .center
+		detailLabel.textColor = .black
 		return detailLabel
 	}
 	
@@ -36,7 +36,7 @@ class ViewController: UIViewController {
 		self.init(nibName: nil, bundle: nil)
 	}
 	
-	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 		initialize()
 	}
@@ -47,38 +47,38 @@ class ViewController: UIViewController {
 	}
 	
 	private func initialize() {
-		let paddedWidth = UIScreen.mainScreen().bounds.size.width - (20.0 * 2.0)
+		let paddedWidth = UIScreen.main.bounds.size.width - (20.0 * 2.0)
 		
 		let titleLabelOB = titleLabel
-		titleLabelOB.frame = CGRectMake(20.0, 109.0, paddedWidth, 21.0)
+		titleLabelOB.frame = CGRect(x: 20.0, y: 109.0, width: paddedWidth, height: 21.0)
 		titleLabelOB.text = "OBSlider"
 		view.addSubview(titleLabelOB)
 		
 		let titleLabelUI = titleLabel
-		titleLabelUI.frame = CGRectMake(20.0, 190.0, paddedWidth, 21.0)
+		titleLabelUI.frame = CGRect(x: 20.0, y: 190.0, width: paddedWidth, height: 21.0)
 		titleLabelUI.text = "UISlider"
 		view.addSubview(titleLabelUI)
 		
 		sliderValueLabel = detailLabel
-		sliderValueLabel.frame = CGRectMake(20.0, 40.0, paddedWidth, 21.0)
+		sliderValueLabel.frame = CGRect(x: 20.0, y: 40.0, width: paddedWidth, height: 21.0)
 		view.addSubview(sliderValueLabel)
 		
 		scrubbingSpeedLabel = detailLabel
-		scrubbingSpeedLabel.frame = CGRectMake(20.0, 69.0, paddedWidth, 21.0)
+		scrubbingSpeedLabel.frame = CGRect(x: 20.0, y: 69.0, width: paddedWidth, height: 21.0)
 		view.addSubview(scrubbingSpeedLabel)
 		
-		slider.addTarget(self, action: "updateUI", forControlEvents: .ValueChanged)
+		slider.addTarget(self, action: #selector(ViewController.updateUI), for: .valueChanged)
 		slider.maximumValue = 1000.0
 		slider.value = 500.0
 		view.addSubview(slider)
 		
-		let standardSlider = UISlider(frame: CGRectMake(18.0, 219.0, UIScreen.mainScreen().bounds.size.width - (18.0 * 2.0), 31.0))
+		let standardSlider = UISlider(frame: CGRect(x: 18.0, y: 219.0, width: UIScreen.main.bounds.size.width - (18.0 * 2.0), height: 31.0))
 		standardSlider.maximumValue = 1000.0
 		standardSlider.value = 500.0
 		view.addSubview(standardSlider)
 	}
 	
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		updateUI()
 	}
@@ -94,11 +94,11 @@ class ViewController: UIViewController {
 	}
 	
 	func updateUI() {
-		let percentFormatter = NSNumberFormatter()
-		percentFormatter.numberStyle = .PercentStyle
+		let percentFormatter = NumberFormatter()
+		percentFormatter.numberStyle = .percent
 		
 		sliderValueLabel.text = String(format: "Value: %.0f", slider.value)
-		scrubbingSpeedLabel.text = "Scrubbing Speed: \(percentFormatter.stringFromNumber(slider.scrubbingSpeed)!)"
+		scrubbingSpeedLabel.text = "Scrubbing Speed: \(percentFormatter.string(from: NSNumber(value: slider.scrubbingSpeed))!)"
 	}
 	
 }

@@ -13,27 +13,27 @@ import UIKit
 @objc
 public protocol OBSliderDelegate: NSObjectProtocol {
 	
-	optional func sliderDidBeginScrubbing(slider: OBSlider)
+	@objc optional func sliderDidBeginScrubbing(_ slider: OBSlider)
 	
-	optional func sliderDidEndScrubbing(slider: OBSlider)
+	@objc optional func sliderDidEndScrubbing(_ slider: OBSlider)
 	
-	optional func slider(slider: OBSlider, didChangeScrubbingSpeed speed: Float)
+	@objc optional func slider(_ slider: OBSlider, didChangeScrubbingSpeed speed: Float)
 	
 }
 
-public class OBSlider: UISlider {
+open class OBSlider: UISlider {
 	
-	public var scrubbingSpeed: Float = 1.0
-	public var scrubbingSpeeds: Array<Float> = [1.0, 0.5, 0.25, 0.1]
-	public var scrubbingSpeedChangePositions: Array<Float> = [0.0, 50.0, 100.0, 150.0]
+	open var scrubbingSpeed: Float = 1.0
+	open var scrubbingSpeeds: Array<Float> = [1.0, 0.5, 0.25, 0.1]
+	open var scrubbingSpeedChangePositions: Array<Float> = [0.0, 50.0, 100.0, 150.0]
 	
-	public weak var delegate: OBSliderDelegate!
+	open weak var delegate: OBSliderDelegate!
 	
-	private var realPositionValue: Float = 0.0
-	private var beganTrackingLocation = CGPointZero
+	fileprivate var realPositionValue: Float = 0.0
+	fileprivate var beganTrackingLocation = CGPoint.zero
 	
 	public convenience init() {
-		self.init(frame: CGRectZero)
+		self.init(frame: CGRect.zero)
 	}
 	
 	public override init(frame: CGRect) {
@@ -42,32 +42,32 @@ public class OBSlider: UISlider {
 	
 	public required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
-		if aDecoder.containsValueForKey("scrubbingSpeeds") {
-			scrubbingSpeeds = aDecoder.decodeObjectForKey("scrubbingSpeeds") as! Array<Float>
+		if aDecoder.containsValue(forKey: "scrubbingSpeeds") {
+			scrubbingSpeeds = aDecoder.decodeObject(forKey: "scrubbingSpeeds") as! Array<Float>
 		}
-		if aDecoder.containsValueForKey("scrubbingSpeedChangePositions") {
-			scrubbingSpeedChangePositions = aDecoder.decodeObjectForKey("scrubbingSpeedChangePositions") as! Array<Float>
+		if aDecoder.containsValue(forKey: "scrubbingSpeedChangePositions") {
+			scrubbingSpeedChangePositions = aDecoder.decodeObject(forKey: "scrubbingSpeedChangePositions") as! Array<Float>
 		}
 		if scrubbingSpeeds.count > 0 {
 			scrubbingSpeed = scrubbingSpeeds[0]
 		}
 	}
 	
-	public override func encodeWithCoder(aCoder: NSCoder) {
-		super.encodeWithCoder(aCoder)
-		aCoder.encodeObject(scrubbingSpeeds, forKey: "scrubbingSpeeds")
-		aCoder.encodeObject(scrubbingSpeedChangePositions, forKey: "scrubbingSpeedChangePositions")
+	open override func encode(with aCoder: NSCoder) {
+		super.encode(with: aCoder)
+		aCoder.encode(scrubbingSpeeds, forKey: "scrubbingSpeeds")
+		aCoder.encode(scrubbingSpeedChangePositions, forKey: "scrubbingSpeedChangePositions")
 	}
 	
-	public override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
-		let beginTracking = super.beginTrackingWithTouch(touch, withEvent: event)
+	open override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+		let beginTracking = super.beginTracking(touch, with: event)
 		if beginTracking {
 			// Set the beginning tracking location to the center of the current
 			// position of the thumb. This ensures that the thumb is correctly re-positioned
 			// when the touch position moves back to the track after tracking in one
 			// of the slower tracking zones.
-			let thumbRect = thumbRectForBounds(bounds, trackRect: trackRectForBounds(bounds), value: value)
-			beganTrackingLocation = CGPointMake(thumbRect.origin.x + thumbRect.size.width / 2.0, thumbRect.origin.y + thumbRect.size.height / 2.0)
+			let thumbRect = self.thumbRect(forBounds: bounds, trackRect: trackRect(forBounds: bounds), value: value)
+			beganTrackingLocation = CGPoint(x: thumbRect.origin.x + thumbRect.size.width / 2.0, y: thumbRect.origin.y + thumbRect.size.height / 2.0)
 			realPositionValue = value
 			
 			delegate?.sliderDidBeginScrubbing?(self)
@@ -76,10 +76,10 @@ public class OBSlider: UISlider {
 		return beginTracking
 	}
 	
-	public override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
-		if tracking {
-			let previousLocation = touch.previousLocationInView(self)
-			let currentLocation = touch.locationInView(self)
+	open override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+		if isTracking {
+			let previousLocation = touch.previousLocation(in: self)
+			let currentLocation = touch.location(in: self)
 			let trackingOffset = currentLocation.x - previousLocation.x
 			
 			// Find the scrubbing speed that corresponds to the touch's vertical offset.
@@ -95,7 +95,7 @@ public class OBSlider: UISlider {
 			}
 			scrubbingSpeed = newScrubbingSpeed
 			
-			let trackRect = trackRectForBounds(bounds)
+			let trackRect = self.trackRect(forBounds: bounds)
 			realPositionValue = realPositionValue + Float(maximumValue - minimumValue) * Float(trackingOffset / trackRect.size.width)
 			
 			let valueAdjustment = scrubbingSpeed * Float(maximumValue - minimumValue) * Float(trackingOffset / trackRect.size.width)
@@ -107,23 +107,23 @@ public class OBSlider: UISlider {
 			}
 			value += valueAdjustment + thumbAdjustment
 			
-			if continuous {
-				sendActionsForControlEvents(.ValueChanged)
+			if isContinuous {
+				sendActions(for: .valueChanged)
 			}
 		}
-		return tracking
+		return isTracking
 	}
 	
-	public override func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?) {
-		if tracking {
+	open override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
+		if isTracking {
 			scrubbingSpeed = scrubbingSpeeds[0]
-			sendActionsForControlEvents(.ValueChanged)
+			sendActions(for: .valueChanged)
 			delegate?.sliderDidEndScrubbing?(self)
 		}
 	}
 	
-	private func indexOfLower(scrubbingSpeed scrubbingSpeedPositions: Array<Float>, forOffset verticalOffset: Float) -> Int {
-		for (i, scrubbingSpeedOffset) in scrubbingSpeedPositions.enumerate() {
+	fileprivate func indexOfLower(scrubbingSpeed scrubbingSpeedPositions: Array<Float>, forOffset verticalOffset: Float) -> Int {
+		for (i, scrubbingSpeedOffset) in scrubbingSpeedPositions.enumerated() {
 			if verticalOffset < scrubbingSpeedOffset {
 				return i
 			}
