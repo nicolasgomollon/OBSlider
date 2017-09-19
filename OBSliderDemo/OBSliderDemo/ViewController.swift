@@ -93,7 +93,7 @@ class ViewController: UIViewController {
 		// Dispose of any resources that can be recreated.
 	}
 	
-	func updateUI() {
+	@objc func updateUI() {
 		let percentFormatter = NumberFormatter()
 		percentFormatter.numberStyle = .percent
 		
