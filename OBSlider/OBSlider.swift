@@ -122,7 +122,7 @@ open class OBSlider: UISlider {
 		}
 	}
 	
-	fileprivate func indexOfLower(scrubbingSpeed scrubbingSpeedPositions: Array<Float>, forOffset verticalOffset: Float) -> Int {
+	fileprivate func indexOfLower(scrubbingSpeed scrubbingSpeedPositions: [Float], forOffset verticalOffset: Float) -> Int {
 		for (i, scrubbingSpeedOffset) in scrubbingSpeedPositions.enumerated() {
 			if verticalOffset < scrubbingSpeedOffset {
 				return i
