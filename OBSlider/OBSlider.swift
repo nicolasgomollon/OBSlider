@@ -21,7 +21,7 @@ public protocol OBSliderDelegate: NSObjectProtocol {
 	
 }
 
-open class OBSlider: UISlider {
+open class OBSlider: UISlider, UIGestureRecognizerDelegate {
 	
 	open var scrubbingSpeed: Float = 1.0
 	open var scrubbingSpeeds: [Float] = [1.0, 0.5, 0.25, 0.1]
@@ -31,6 +31,7 @@ open class OBSlider: UISlider {
 	
 	fileprivate var realPositionValue: Float = 0.0
 	fileprivate var beganTrackingLocation: CGPoint = .zero
+	fileprivate var panGestureRecognizer: UIPanGestureRecognizer!
 	
 	public convenience init() {
 		self.init(frame: .zero)
@@ -38,6 +39,7 @@ open class OBSlider: UISlider {
 	
 	public override init(frame: CGRect) {
 		super.init(frame: frame)
+		commonInit()
 	}
 	
 	public required init?(coder aDecoder: NSCoder) {
@@ -51,12 +53,25 @@ open class OBSlider: UISlider {
 		if !scrubbingSpeeds.isEmpty {
 			scrubbingSpeed = scrubbingSpeeds[0]
 		}
+		commonInit()
 	}
 	
 	open override func encode(with aCoder: NSCoder) {
 		super.encode(with: aCoder)
 		aCoder.encode(scrubbingSpeeds, forKey: "scrubbingSpeeds")
 		aCoder.encode(scrubbingSpeedChangePositions, forKey: "scrubbingSpeedChangePositions")
+	}
+	
+	fileprivate func commonInit() {
+		panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OBSlider.handlePan(_:)))
+		panGestureRecognizer.delegate = self
+		panGestureRecognizer.minimumNumberOfTouches = 1
+		panGestureRecognizer.maximumNumberOfTouches = 1
+		if #available(iOS 13.4, *) {
+			panGestureRecognizer.allowedTouchTypes = [NSNumber(integerLiteral: UITouch.TouchType.indirectPointer.rawValue)]
+			panGestureRecognizer.allowedScrollTypesMask = [.continuous]
+		}
+		addGestureRecognizer(panGestureRecognizer)
 	}
 	
 	open override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
@@ -129,6 +144,52 @@ open class OBSlider: UISlider {
 			}
 		}
 		return NSNotFound
+	}
+	
+	open override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+		guard let panRecognizer: UIPanGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else { return true }
+		let velocity: CGPoint = panRecognizer.velocity(in: self)
+		let horizontalPanning: Bool = abs(velocity.x) > abs(velocity.y)
+		return horizontalPanning
+	}
+	
+	@objc fileprivate func handlePan(_ panGesture: UIPanGestureRecognizer) {
+		switch panGesture.state {
+		case .began:
+			delegate?.sliderDidBeginScrubbing?(self)
+			delegate?.slider?(self, didChangeScrubbingSpeed: scrubbingSpeed)
+		case .changed:
+			let translation: CGPoint = panGesture.translation(in: self)
+			
+			var scrubbingSpeedChangePosIndex: Int = indexOfLower(scrubbingSpeed: scrubbingSpeedChangePositions, forOffset: Float(abs(translation.y)))
+			if scrubbingSpeedChangePosIndex == NSNotFound {
+				scrubbingSpeedChangePosIndex = scrubbingSpeeds.count
+			}
+			
+			let newScrubbingSpeed: Float = scrubbingSpeeds[scrubbingSpeedChangePosIndex - 1]
+			if (newScrubbingSpeed != scrubbingSpeed) {
+				delegate?.slider?(self, didChangeScrubbingSpeed: newScrubbingSpeed)
+			}
+			scrubbingSpeed = newScrubbingSpeed
+			
+			let trackRect: CGRect = self.trackRect(forBounds: bounds)
+			let valueAdjustment: Float = scrubbingSpeed * Float(maximumValue - minimumValue) * Float(translation.x / trackRect.size.width)
+			value += valueAdjustment
+			
+			if isContinuous {
+				sendActions(for: .valueChanged)
+			}
+			
+			panGesture.setTranslation(CGPoint(x: 0.0, y: translation.y), in: self)
+		case .ended,
+			 .cancelled,
+			 .failed:
+			scrubbingSpeed = scrubbingSpeeds[0]
+			sendActions(for: .valueChanged)
+			delegate?.sliderDidEndScrubbing?(self)
+		default:
+			break
+		}
 	}
 	
 }
