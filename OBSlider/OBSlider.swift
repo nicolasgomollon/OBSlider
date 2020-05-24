@@ -148,6 +148,7 @@ open class OBSlider: UISlider, UIGestureRecognizerDelegate {
 	
 	open override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 		guard let panRecognizer: UIPanGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else { return true }
+		guard panRecognizer == panGestureRecognizer else { return false }
 		let velocity: CGPoint = panRecognizer.velocity(in: self)
 		let horizontalPanning: Bool = abs(velocity.x) > abs(velocity.y)
 		return horizontalPanning
